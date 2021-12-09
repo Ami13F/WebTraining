@@ -34,6 +34,11 @@ body > section {
   flex: 1;
 }
 
+#teams-table {
+  margin-top: 5px;
+  min-width: 100%;
+}
+
 table {
   margin-top: 5px;
 }
@@ -42,6 +47,8 @@ table {
   text-align: center;
   background-color: #334455;
   color: #fff;
+  font-size: 2rem;
+  line-height: 1.25;
 }
 
 #top-menu-bar li {
@@ -64,4 +71,13 @@ table {
 #top-menu-bar a:hover {
   color: #334455;
   background-color: #fff;
+}
+
+#footer {
+  background-color: #736b5e;
+  font-size: 1.5rem;
+  line-height: 1.25;
+  background-color: #3e3b48;
+  color: #9d97b2;
+  text-align: center;
 }

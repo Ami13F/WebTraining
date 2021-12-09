@@ -26,22 +26,38 @@
       </div>
       <div id="main">
         <input id="search-id" type="text" placeholder="Search" />
-        <table id="teams-table" border="1">
-          <thead>
-            <tr>
-              <th>Group</th>
-              <th>Members</th>
-              <th>Project Name</th>
-              <th>Project URL</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody></tbody>
-        </table>
+        <form id="editForm" action="" onsubmit="return false;">
+          <table id="teams-table" border="1">
+            <thead>
+              <tr>
+                <th>Group</th>
+                <th>Members</th>
+                <th>Project Name</th>
+                <th>Project URL</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+            <tfoot>
+              <tr>
+                <td><input type="text" name="promotion" required placeholder="Promotion" /></td>
+                <td><input type="text" name="members" required placeholder="Members" /></td>
+                <td><input type="text" name="name" required placeholder="Name" /></td>
+                <td><input type="text" name="url" required placeholder="Url" /></td>
+                <td>
+                  <button type="submit">Save</button>
+                </td>
+              </tr>
+            </tfoot>
+          </table>
+        </form>
       </div>
     </section>
 
-    <footer>Footer</footer>
+    <footer id="footer">
+      <a>Ami's site </a> |
+      <a>Be careful!</a>
+    </footer>
     <!-- If we use webpack will add automaticaly the script
       <script src="index.js"></script> -->
   </body>
