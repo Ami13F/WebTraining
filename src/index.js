@@ -1,4 +1,4 @@
-console.info("hello, Ami");
+console.info("Hello, Ami");
 
 var teams = [
   {
@@ -26,8 +26,9 @@ function getTeamHTML(team) {
 </tr>`;
 }
 
-for (var i = 0; i < teams.length; i++) {
-  var tb = document.querySelector("#teams-table tbody");
-  var tr = getTeamHTML(teams[i]);
+var tb = document.querySelector("#teams-table tbody");
+
+teams.forEach(team => {
+  var tr = getTeamHTML(team);
   tb.innerHTML += tr;
-}
+});
