@@ -1,20 +1,5 @@
 console.info("Hello, Ami");
 
-var teams = [
-  {
-    promotion: "itiviti2021",
-    members: "Amelia",
-    projectName: "Team Networking",
-    url: "https://www.w3schools.com/"
-  },
-  {
-    promotion: "itiviti2022",
-    members: "Restu",
-    projectName: "Team Networking",
-    url: "https://www.w3schools.com/"
-  }
-];
-
 function getTeamHTML(team) {
   return `<tr>
         <td>${team.promotion}</td>
@@ -27,14 +12,36 @@ function getTeamHTML(team) {
 }
 
 var tb = document.querySelector("#teams-table tbody");
+var teams;
 
-teams.forEach(team => {
-  var tr = getTeamHTML(team);
-  tb.innerHTML += tr;
-});
+function displayTableHTML(teamsArray) {
+  var teamHTML = teamsArray.map(team => getTeamHTML(team));
+  tb.innerHTML = teamHTML.join("");
+}
 
-var m = teams.map(function (team) {
-  return getTeamHTML(team);
-});
+function initEvents() {
+  var search = document.getElementById("search-id");
+  search.addEventListener("input", event => {
+    var text = event.target.value;
+    displayTableHTML(teams.filter(el => el.members.toLowerCase().includes(text)));
+  });
+}
 
-tb.innerHTML = m.join("");
+initEvents();
+
+function loadTeams() {
+  // GET teams-json
+  return fetch("http://localhost:3000/teams-json", {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json"
+    }
+  })
+    .then(response => response.json())
+    .then(fetchedTeams => {
+      teams = fetchedTeams;
+      displayTableHTML(fetchedTeams);
+    });
+}
+
+loadTeams();
