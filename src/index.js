@@ -32,3 +32,9 @@ teams.forEach(team => {
   var tr = getTeamHTML(team);
   tb.innerHTML += tr;
 });
+
+var m = teams.map(function (team) {
+  return getTeamHTML(team);
+});
+
+tb.innerHTML = m.join("");
