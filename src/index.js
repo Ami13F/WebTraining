@@ -27,7 +27,7 @@ function filterTeams(text) {
   displayTableHTML(filteredTeams);
 }
 
-function createTeamRequest(team) {
+function createTeamRequest(team, successFunction) {
   // POST teams-json/create
   fetch("http://localhost:3000/teams-json/create", {
     method: "POST",
@@ -45,8 +45,12 @@ function createTeamRequest(team) {
         team.id = status.id;
         // teams.push(team);
         // push will use the same ref, the corect way to add elements
-        teams = [...teams, team];
+        teams = [...teams, { ...team, id: status.id }]; //create new object to avoid object mutation
         displayTableHTML(teams);
+        if (successFunction) {
+          // if there is any success function will call it(CALLBACK)
+          successFunction(status.id);
+        }
       }
     });
 }
@@ -67,8 +71,10 @@ function getSubmitValues() {
 function submitForm() {
   console.info("Submiting...");
   const team = getSubmitValues();
-
-  createTeamRequest(team);
+  console.info(team, JSON.stringify(team));
+  createTeamRequest(team, function successFunction(teamId) {
+    console.info(team, JSON.stringify(team), teamId);
+  });
 }
 
 function initEvents() {
