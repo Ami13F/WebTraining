@@ -1,11 +1,18 @@
 console.info("Hello, Ami");
 
-function getTeamHTML(team) {
+function getTeamHTML({
+  //destructuring: instead to use the hole object specify what you need(json keys in our case)
+  promotion,
+  members,
+  name,
+  url,
+  id
+}) {
   return `<tr>
-        <td>${team.promotion}</td>
-        <td>${team.members}</td>
-        <td>${team.name}</td>
-        <td>${team.url}</td>
+        <td>${promotion}</td>
+        <td>${members}</td>
+        <td>${name}</td>
+        <td>${url}</td>
         <td>x</td>
     </td>
 </tr>`;
@@ -21,8 +28,14 @@ function displayTableHTML(teamsArray) {
 
 function filterTeams(text) {
   text = text.toLowerCase();
-  var filteredTeams = teams.filter(el => {
-    return el.members.toLowerCase().includes(text);
+  var filteredTeams = teams.filter(team => {
+    // const name = team.name;
+    // using destructuring
+    const { promotion: group, members, name } = team;
+
+    return (
+      name.toLowerCase().includes(text) || group.toLowerCase().includes(text) || members.toLowerCase().includes(text)
+    );
   });
   displayTableHTML(filteredTeams);
 }
@@ -57,14 +70,14 @@ function createTeamRequest(team, successFunction) {
 
 function getSubmitValues() {
   const promotion = document.querySelector("#editForm input[name=promotion]").value;
-  const name = document.querySelector("input[name=name]").value;
+  const projectName = document.querySelector("input[name=name]").value;
   const members = document.querySelector("input[name=members]").value;
   const url = document.querySelector("input[name=url]").value;
   return {
-    promotion: promotion,
-    members: members,
-    name: name,
-    url: url
+    promotion,
+    members,
+    name: projectName,
+    url // if equivalent with(if key name and value are the same):  url: url
   };
 }
 
