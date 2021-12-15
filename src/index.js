@@ -28,6 +28,7 @@ let editId;
 function displayTableHTML(teamsArray) {
   var teamHTML = teamsArray.map(team => getTeamHTML(team));
   tb.innerHTML = teamHTML.join("");
+  console.info("here", teams);
 }
 
 function filterTeams(text) {
@@ -111,7 +112,7 @@ function deleteTeamRequest(teamId) {
     headers: {
       "Content-Type": "application/json"
     },
-    body: JSON.stringify({ id: { teamId } })
+    body: JSON.stringify({ id: teamId })
   });
 }
 
