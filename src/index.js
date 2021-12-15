@@ -13,13 +13,17 @@ function getTeamHTML({
         <td>${members}</td>
         <td>${name}</td>
         <td>${url}</td>
-        <td>x</td>
+        <td>
+          <a href="#" data-team-id="${id}" class="edit-btn">&#9998;</a>
+          <a href="#" data-team-id="${id}" class="delete-btn">&#10006;</a>          
+        </td>    
     </td>
 </tr>`;
 }
 
 var tb = document.querySelector("#teams-table tbody");
 var teams;
+let editId;
 
 function displayTableHTML(teamsArray) {
   var teamHTML = teamsArray.map(team => getTeamHTML(team));
@@ -81,13 +85,77 @@ function getSubmitValues() {
   };
 }
 
+function updateTeamRequest(team) {
+  // PUT teams-json/update
+  fetch("http://localhost:3000/teams-json/update", {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(team)
+  })
+    .then(r => r.json())
+    .then(status => {
+      if (status.success) {
+        console.info("edit successful");
+        loadTeams();
+      }
+    });
+}
+
+function deleteTeamRequest(teamId) {
+  console.warn("delete hit", teamId);
+  // DELETE teams-json/delete
+  return fetch("http://localhost:3000/teams-json/delete", {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ id: { teamId } })
+  });
+}
+
+function deleteTeam(teamId) {
+  deleteTeamRequest(teamId)
+    .then(response => response.json())
+    .then(status => {
+      if (status.success) {
+        console.warn("success");
+        loadTeams();
+      }
+    });
+}
+
+function setFormValues({ promotion, name, members, url }) {
+  document.querySelector("#editForm input[name=promotion]").value = promotion;
+  document.querySelector("input[name=name]").value = name;
+  document.querySelector("input[name=members]").value = members;
+  document.querySelector("input[name=url]").value = url;
+}
+
+function cleanValues() {
+  // setFormValues({ promotion: "", name: "", members: "", url: "" });
+  editId = undefined;
+  document.querySelector("#editForm").reset();
+}
+
+function editTeam(id) {
+  console.warn("edit hit");
+  const team = teams.find(team => team.id === id);
+  setFormValues(team);
+  editId = id;
+}
+
 function submitForm() {
   console.info("Submiting...");
   const team = getSubmitValues();
-  console.info(team, JSON.stringify(team));
-  createTeamRequest(team, function successFunction(teamId) {
-    console.info(team, JSON.stringify(team), teamId);
-  });
+  if (editId) {
+    team.id = editId;
+    updateTeamRequest(team);
+  } else {
+    createTeamRequest(team);
+  }
+  cleanValues();
 }
 
 function initEvents() {
@@ -98,6 +166,19 @@ function initEvents() {
   });
 
   document.querySelector("#editForm").addEventListener("submit", submitForm);
+  // we override reset event here
+  document.querySelector("#editForm").addEventListener("reset", cleanValues);
+
+  document.querySelector("#teams-table tbody").addEventListener("click", event => {
+    console.warn("click", event);
+    if (event.target.matches("a.delete-btn")) {
+      const id = event.target.getAttribute("data-team-id");
+      deleteTeam(id);
+    } else if (event.target.matches("a.edit-btn")) {
+      const id = event.target.getAttribute("data-team-id");
+      editTeam(id);
+    }
+  });
 }
 
 initEvents();
