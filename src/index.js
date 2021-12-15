@@ -41,7 +41,12 @@ function createTeamRequest(team) {
       console.info(status);
       if (status.success) {
         //window.location.reload();
-        loadTeams();
+        // loadTeams();
+        team.id = status.id;
+        // teams.push(team);
+        // push will use the same ref, the corect way to add elements
+        teams = [...teams, team];
+        displayTableHTML(teams);
       }
     });
 }
