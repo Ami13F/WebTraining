@@ -170,10 +170,7 @@ async function removeSelected() {
   $("#editForm").classList.add("loading-mask");
 
   const removeRequests = Array.from(checkboxes).map(checkbox => deleteTeamRequest(checkbox.value));
-  // Promise.allSettled(removeRequests).then(() => {
-  //   console.info("All selected items are removed");
-  //   loadTeams();
-  // }); // when all promises are done
+
   removeRequests.push(sleep(2000));
   await Promise.allSettled(removeRequests);
   await loadTeams();

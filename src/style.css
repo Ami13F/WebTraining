@@ -76,6 +76,16 @@ input[type="text" i] {
   align-items: center;
 }
 
+.edit-btn a:link {
+  text-decoration: none;
+  color: green;
+}
+
+.edit-btn a:visited {
+  color: green;
+  text-decoration: none;
+}
+
 #top-menu-bar {
   text-align: center;
   background-color: #ebeaef;
