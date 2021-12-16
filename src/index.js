@@ -1,7 +1,8 @@
-import { debounce, sleep } from "./utilities"; // use {methodName} for destricturing
+import { sleep, debounce, $, $$ } from "./utilities"; // use {methodName} for destricturing
 import myDefaultStuff from "./utilities";
+// import { _ } from "lodash"; //_ will be a JSON
+// import { debounce } from "lodash/debounce"; // best way to import only what is needed
 
-sleep(1);
 console.info("Hello, Ami");
 
 function getTeamHTML({
@@ -13,6 +14,8 @@ function getTeamHTML({
   id
 }) {
   return `<tr>
+        <td style="text-align:center">
+          <input value="${id}" type="checkbox"/></td>
         <td>${promotion}</td>
         <td>${members}</td>
         <td>${name}</td>
@@ -161,12 +164,22 @@ function submitForm() {
   cleanValues();
 }
 
+async function removeSelected() {
+  var checkboxes = $$("#teams-table tbody input[type=checkbox]:checked");
+  const removeRequests = Array.from(checkboxes).map(checkbox => deleteTeamRequest(checkbox.value));
+  // Promise.allSettled(removeRequests).then(() => {
+  //   console.info("All selected items are removed");
+  //   loadTeams();
+  // }); // when all promises are done
+
+  await Promise.allSettled(removeRequests);
+  loadTeams();
+}
+
 function initEvents() {
+  $("#remove-selected").addEventListener("click", removeSelected);
+
   var search = document.getElementById("search-id");
-  // search.addEventListener("input", event => {
-  //   var searchText = event.target.value;
-  //   filterTeams(searchText);
-  // });
 
   search.addEventListener(
     "input",
@@ -181,7 +194,6 @@ function initEvents() {
   document.querySelector("#editForm").addEventListener("reset", cleanValues);
 
   document.querySelector("#teams-table tbody").addEventListener("click", event => {
-    console.warn("click", event);
     if (event.target.matches("a.delete-btn")) {
       const id = event.target.getAttribute("data-team-id");
       deleteTeam(id);

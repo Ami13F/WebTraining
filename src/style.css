@@ -71,6 +71,11 @@ input[type="text" i] {
   padding: 1px 2px;
 }
 
+.select-cell {
+  width: 40px;
+  align-items: center;
+}
+
 #top-menu-bar {
   text-align: center;
   background-color: #ebeaef;

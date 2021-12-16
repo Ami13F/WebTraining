@@ -12,3 +12,9 @@ npm run build
 ```
 npm start
 ```
+
+## Add utilities library
+
+```
+npm install --save lodash
+```

@@ -23,6 +23,14 @@ export function debounce(fn, delay) {
   };
 }
 
+export function $(selector) {
+  return document.querySelector(selector);
+}
+
+export function $$(selector) {
+  return document.querySelectorAll(selector);
+}
+
 // // self invoke anonymus function
 // (() => {
 //   console.time("sleep");

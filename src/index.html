@@ -25,10 +25,14 @@
         <section>Menu 2</section>
       </div>
       <div id="main">
-        <input id="search-id" type="text" placeholder="Search" />
+        <div>
+          <button id="remove-selected">Remove Selected ✖</button>
+          <input id="search-id" type="text" placeholder="Search" />
+        </div>
         <form id="editForm" action="" onsubmit="return false;">
           <table id="teams-table" border="1">
             <colgroup>
+              <col span="1" class="select-cell" />
               <col span="1" />
               <col span="1" />
               <col span="1" />
@@ -37,6 +41,7 @@
             </colgroup>
             <thead>
               <tr>
+                <th><input type="checkbox" class="select-all" /></th>
                 <th>Group</th>
                 <th>Members</th>
                 <th>Project Name</th>
@@ -47,6 +52,7 @@
             <tbody></tbody>
             <tfoot>
               <tr>
+                <td></td>
                 <td><input type="text" name="promotion" required placeholder="Promotion" /></td>
                 <td><input type="text" name="members" required placeholder="Members" /></td>
                 <td><input type="text" name="name" required placeholder="Name" /></td>
