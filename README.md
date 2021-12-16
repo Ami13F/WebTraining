@@ -13,8 +13,9 @@ npm run build
 npm start
 ```
 
-## Add utilities library
+## Add utilities and css library
 
 ```
 npm install --save lodash
+npm install --save-dev mini-css-extract-plugin
 ```
