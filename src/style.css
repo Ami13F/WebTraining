@@ -97,7 +97,7 @@ input[type="text" i] {
 }
 
 #top-menu-bar a:visited {
-  color: #fff;
+  color: #5000a5; /* do not change the color after click*/
 }
 
 #top-menu-bar a:hover {

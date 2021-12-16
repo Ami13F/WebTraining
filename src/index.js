@@ -12,7 +12,7 @@ function getTeamHTML({
         <td>${promotion}</td>
         <td>${members}</td>
         <td>${name}</td>
-        <td>${url}</td>
+        <td><a href="${url}" target="_blank">${url.replace("https://github.com/", "")}</a></td>
         <td>
           <a href="#" data-team-id="${id}" class="edit-btn">&#9998;</a>
           <a href="#" data-team-id="${id}" class="delete-btn">&#10006;</a>          
@@ -117,12 +117,16 @@ function deleteTeamRequest(teamId) {
 }
 
 function deleteTeam(teamId) {
+  const countBeforeDelete = teams.length;
   deleteTeamRequest(teamId)
     .then(response => response.json())
     .then(status => {
       if (status.success) {
         console.warn("success");
-        loadTeams();
+        var load = loadTeams();
+        load.then(newTeams => {
+          console.log("result", countBeforeDelete - newTeams.length);
+        });
       }
     });
 }
@@ -182,8 +186,6 @@ function initEvents() {
   });
 }
 
-initEvents();
-
 function loadTeams() {
   // GET teams-json
   return fetch("http://localhost:3000/teams-json", {
@@ -196,7 +198,40 @@ function loadTeams() {
     .then(fetchedTeams => {
       teams = fetchedTeams;
       displayTableHTML(fetchedTeams);
+      return teams;
     });
 }
 
+function sleep(ms) {
+  return new Promise(resolve => {
+    setTimeout(() => {
+      console.warn("sleep instant");
+      resolve();
+    }, ms);
+  });
+}
+
+// // self invoke anonymus function
+// (() => {
+//   console.time("sleep");
+//   sleep(200).then(() => {
+//     console.timeEnd("sleep");
+//     console.warn("much better after sleep");
+//   });
+
+//   console.time("stringCompute");
+//   let str = "";
+//   for (let i = 0; i < 500000; i++) {
+//     str += "x".toUpperCase() + i.toString().toLowerCase();
+//   }
+//   console.timeEnd("stringCompute");
+//   console.warn("after looong string computations....");
+// })();
+
+// (async () => {
+//   await sleep(2000); // will execute code after sleep is done
+//   console.info("after sleep 2");
+// })();
+
+initEvents();
 loadTeams();
