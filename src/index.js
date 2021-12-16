@@ -1,3 +1,7 @@
+import { debounce, sleep } from "./utilities"; // use {methodName} for destricturing
+import myDefaultStuff from "./utilities";
+
+sleep(1);
 console.info("Hello, Ami");
 
 function getTeamHTML({
@@ -28,7 +32,6 @@ let editId;
 function displayTableHTML(teamsArray) {
   var teamHTML = teamsArray.map(team => getTeamHTML(team));
   tb.innerHTML = teamHTML.join("");
-  console.info("here", teams);
 }
 
 function filterTeams(text) {
@@ -56,7 +59,6 @@ function createTeamRequest(team, successFunction) {
   })
     .then(r => r.json())
     .then(status => {
-      console.info(status);
       if (status.success) {
         //window.location.reload();
         // loadTeams();
@@ -98,14 +100,12 @@ function updateTeamRequest(team) {
     .then(r => r.json())
     .then(status => {
       if (status.success) {
-        console.info("edit successful");
         loadTeams();
       }
     });
 }
 
 function deleteTeamRequest(teamId) {
-  console.warn("delete hit", teamId);
   // DELETE teams-json/delete
   return fetch("http://localhost:3000/teams-json/delete", {
     method: "DELETE",
@@ -117,16 +117,14 @@ function deleteTeamRequest(teamId) {
 }
 
 function deleteTeam(teamId) {
+  console.info("delete hit");
   const countBeforeDelete = teams.length;
   deleteTeamRequest(teamId)
     .then(response => response.json())
-    .then(status => {
+    .then(async status => {
       if (status.success) {
-        console.warn("success");
-        var load = loadTeams();
-        load.then(newTeams => {
-          console.log("result", countBeforeDelete - newTeams.length);
-        });
+        const newTeams = await loadTeams();
+        console.log("Deleted teams number:", countBeforeDelete - newTeams.length);
       }
     });
 }
@@ -145,7 +143,7 @@ function cleanValues() {
 }
 
 function editTeam(id) {
-  console.warn("edit hit");
+  console.info("edit hit");
   const team = teams.find(team => team.id === id);
   setFormValues(team);
   editId = id;
@@ -165,10 +163,18 @@ function submitForm() {
 
 function initEvents() {
   var search = document.getElementById("search-id");
-  search.addEventListener("input", event => {
-    var text = event.target.value;
-    filterTeams(text);
-  });
+  // search.addEventListener("input", event => {
+  //   var searchText = event.target.value;
+  //   filterTeams(searchText);
+  // });
+
+  search.addEventListener(
+    "input",
+    debounce(event => {
+      var searchText = event.target.value;
+      filterTeams(searchText);
+    }, 1000)
+  );
 
   document.querySelector("#editForm").addEventListener("submit", submitForm);
   // we override reset event here
@@ -201,37 +207,6 @@ function loadTeams() {
       return teams;
     });
 }
-
-function sleep(ms) {
-  return new Promise(resolve => {
-    setTimeout(() => {
-      console.warn("sleep instant");
-      resolve();
-    }, ms);
-  });
-}
-
-// // self invoke anonymus function
-// (() => {
-//   console.time("sleep");
-//   sleep(200).then(() => {
-//     console.timeEnd("sleep");
-//     console.warn("much better after sleep");
-//   });
-
-//   console.time("stringCompute");
-//   let str = "";
-//   for (let i = 0; i < 500000; i++) {
-//     str += "x".toUpperCase() + i.toString().toLowerCase();
-//   }
-//   console.timeEnd("stringCompute");
-//   console.warn("after looong string computations....");
-// })();
-
-// (async () => {
-//   await sleep(2000); // will execute code after sleep is done
-//   console.info("after sleep 2");
-// })();
 
 initEvents();
 loadTeams();
