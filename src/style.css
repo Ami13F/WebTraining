@@ -76,13 +76,16 @@ input[type="text" i] {
   align-items: center;
 }
 
-.edit-btn a:link {
+a.edit-btn:link,
+a.delete-btn:link {
+  background-color: transparent;
   text-decoration: none;
   color: green;
 }
 
-.edit-btn a:visited {
-  color: green;
+a.edit-btn:visited,
+a.delete-btn:visited {
+  color: blue;
   text-decoration: none;
 }
 
