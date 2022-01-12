@@ -24,10 +24,6 @@
   color: white;
 }
 
-.App-link {
-  color: #61dafb;
-}
-
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);
@@ -35,4 +31,144 @@
   to {
     transform: rotate(360deg);
   }
+}
+
+/* selector { styles } */
+html {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  min-height: 100%; /*maybe scroll is needed*/
+  display: flex; /* say to principal div that all kids are slitted equaly but we can change it*/
+  flex-direction: column; /* in which direction to split*/
+}
+
+#root {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+#content {
+  /* only first level from body  */
+  flex: 1; /* every first child will have 1 peace*/
+}
+
+#content {
+  display: flex;
+  flex-direction: row;
+}
+
+#side-menu {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+#main {
+  flex: 2;
+}
+
+#side-menu section {
+  flex: 1;
+}
+
+#teams-table {
+  margin-top: 5px;
+  min-width: 100%;
+  border-collapse: collapse;
+}
+
+table {
+  margin-top: 5px;
+}
+
+#teams-table th,
+#teams-table td {
+  border: 1px solid #29a7e1;
+  padding: 5px;
+}
+
+#teams-table th {
+  background-color: #5000a5;
+  color: rgb(232, 230, 227);
+}
+
+#teams-table tr:nth-child(even) {
+  background-color: #f1f1fa;
+}
+
+#teams-table tfoot input[type="text"] {
+  width: 100%;
+}
+
+input:not([type="image" i]) {
+  box-sizing: border-box;
+}
+
+input[type="text" i] {
+  padding: 1px 2px;
+}
+
+.select-cell {
+  width: 40px;
+  align-items: center;
+}
+
+a.edit-btn:link,
+a.delete-btn:link {
+  background-color: transparent;
+  text-decoration: none;
+  color: green;
+}
+
+a.edit-btn:visited,
+a.delete-btn:visited {
+  color: blue;
+  text-decoration: none;
+}
+
+#top-menu-bar {
+  text-align: center;
+  background-color: #ebeaef;
+  color: #fff;
+  font-size: 2rem;
+  line-height: 1.25;
+}
+
+#top-menu-bar li {
+  display: inline;
+  margin: 0;
+  padding: 0;
+}
+
+#top-menu-bar a {
+  text-decoration: none; /* makes links not purple */
+  padding: 5px 15px;
+  color: #5000a5;
+  font-size: 0.9em;
+  font-weight: 700;
+  border-radius: 10px;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+#top-menu-bar a:visited {
+  color: #5000a5; /* do not change the color after click*/
+}
+
+#top-menu-bar a:hover {
+  color: #334455;
+  background-color: #fff;
+}
+
+#footer {
+  background-color: #736b5e;
+  font-size: 1.5rem;
+  line-height: 1.25;
+  background-color: #3e3b48;
+  color: #9d97b2;
+  text-align: center;
 }
