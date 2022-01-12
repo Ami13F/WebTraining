@@ -1,11 +1,22 @@
-export default function TeamsTable() {
+export type Team = {
+  id: string | number;
+  members: string;
+  name: string;
+  url: string;
+  promotion: string;
+};
+
+type Props = {
+  teams: Team[];
+};
+
+export default function TeamsTable(props: Props) {
   return (
     <form
       id="editForm"
-      action=""
       onSubmit={e => {
         e.preventDefault();
-        console.warn("test");
+        console.warn("submit done", props);
       }}
     >
       <table id="teams-table">
@@ -29,7 +40,33 @@ export default function TeamsTable() {
             <th></th>
           </tr>
         </thead>
-        <tbody></tbody>
+        <tbody>
+          {props.teams.map(team => {
+            return (
+              <tr key={team.id}>
+                <td style={{ textAlign: "center" }}>
+                  <input value={team.id} type="checkbox" />
+                </td>
+                <td>{team.promotion}</td>
+                <td>{team.members}</td>
+                <td>{team.name}</td>
+                <td>
+                  <a href={team.url} target="_blank">
+                    {team.url.replace("https://github.com/", "")}
+                  </a>
+                </td>
+                <td>
+                  <a href="#" data-team-id={team.id} className="edit-btn">
+                    &#9998;
+                  </a>
+                  <a href="#" data-team-id={team.id} className="delete-btn">
+                    &#10006;
+                  </a>
+                </td>
+              </tr>
+            );
+          })}
+        </tbody>
         <tfoot>
           <tr>
             <td></td>
