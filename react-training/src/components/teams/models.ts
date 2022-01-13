@@ -1,11 +1,7 @@
 export type Team = {
-  id: string | number;
+  id: string;
   members: string;
   name: string;
   url: string;
   promotion: string;
-};
-
-export type Props = {
-  teams: Team[];
 };

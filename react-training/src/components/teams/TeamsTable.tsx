@@ -1,16 +1,22 @@
 import React, { useState } from "react";
-import { createTeam, loadTeam } from "./middleware";
+import { createTeam, deleteTeam, loadTeam } from "./middleware";
 import { Team } from "./models";
 import "../../styles/loading.css";
+import { isEmptyStatement } from "typescript";
 
 type Props = {
   loading: boolean;
+  team: Team;
   teams: Team[];
 };
 
 type Actions = {
   // save: () => void;
   save(team: Team): void;
+  delete(teamId: string): void;
+  startEdit(teamId: string): void;
+  reset(): void;
+  inputChanged(name: string, value: string): void;
 };
 
 function getValues(form: HTMLFormElement): Team {
@@ -28,7 +34,6 @@ export function TeamsTable(props: Props & Actions) {
         e.preventDefault();
         var form = e.target as HTMLFormElement;
         const team = getValues(form);
-        console.log(team);
         props.save(team);
       }}
     >
@@ -69,10 +74,24 @@ export function TeamsTable(props: Props & Actions) {
                   </a>
                 </td>
                 <td>
-                  <a href="#" data-team-id={team.id} className="edit-btn">
+                  <a
+                    href="#"
+                    data-team-id={team.id}
+                    className="edit-btn"
+                    onClick={() => {
+                      props.startEdit(team.id);
+                    }}
+                  >
                     &#9998;
                   </a>
-                  <a href="#" data-team-id={team.id} className="delete-btn">
+                  <a
+                    href="#"
+                    data-team-id={team.id}
+                    className="delete-btn"
+                    onClick={() => {
+                      props.delete(team.id);
+                    }}
+                  >
                     &#10006;
                   </a>
                 </td>
@@ -84,16 +103,52 @@ export function TeamsTable(props: Props & Actions) {
           <tr>
             <td></td>
             <td>
-              <input type="text" name="promotion" required placeholder="Promotion" />
+              <input
+                type="text"
+                name="promotion"
+                value={props.team.promotion}
+                onChange={e => {
+                  props.inputChanged(e.target.name, e.target.value);
+                }}
+                required
+                placeholder="Promotion"
+              />
             </td>
             <td>
-              <input type="text" name="members" required placeholder="Members" />
+              <input
+                type="text"
+                name="members"
+                value={props.team.members}
+                onChange={e => {
+                  props.inputChanged(e.target.name, e.target.value);
+                }}
+                required
+                placeholder="Members"
+              />
             </td>
             <td>
-              <input type="text" name="name" required placeholder="Name" />
+              <input
+                type="text"
+                name="name"
+                value={props.team.name}
+                onChange={e => {
+                  props.inputChanged(e.target.name, e.target.value);
+                }}
+                required
+                placeholder="Name"
+              />
             </td>
             <td>
-              <input type="text" name="url" required placeholder="Url" />
+              <input
+                type="text"
+                name="url"
+                value={props.team.url}
+                onChange={e => {
+                  props.inputChanged(e.target.name, e.target.value);
+                }}
+                required
+                placeholder="Url"
+              />
             </td>
             <td>
               <button type="submit">➕</button>
@@ -106,11 +161,20 @@ export function TeamsTable(props: Props & Actions) {
   );
 }
 
+const emptyTeam: Team = {
+  id: "",
+  members: "",
+  name: "",
+  url: "",
+  promotion: ""
+};
+
 export default class TeamsTableComponent extends React.Component<{}, Props> {
   constructor(props: Props) {
     super(props);
     this.state = {
       loading: true,
+      team: { ...emptyTeam },
       teams: []
     };
     // // override/bind save method to keep reference to this.save
@@ -120,6 +184,10 @@ export default class TeamsTableComponent extends React.Component<{}, Props> {
     //   originalSave.call(this, team);
     // };
     this.save = this.save.bind(this);
+    this.delete = this.delete.bind(this);
+    this.startEdit = this.startEdit.bind(this);
+    this.reset = this.reset.bind(this);
+    this.inputChange = this.inputChange.bind(this);
   }
 
   componentDidMount() {
@@ -140,16 +208,57 @@ export default class TeamsTableComponent extends React.Component<{}, Props> {
     });
     const response = await createTeam(team);
     team.id = response.id;
-    this.setState(previewState => {
-      return {
-        loading: false,
-        teams: [...previewState.teams, team]
-      };
-    });
+    this.setState(previewState => ({
+      loading: false,
+      teams: [...previewState.teams, team]
+    }));
   }
 
+  async delete(teamId: string) {
+    this.setState({
+      loading: true
+    });
+    const response = await deleteTeam(teamId);
+    if (response.success) {
+      this.setState(state => ({
+        loading: false,
+        teams: state.teams.filter(team => team.id !== teamId)
+      }));
+    }
+  }
+
+  startEdit(teamId: string) {
+    this.setState(state => ({
+      team: state.teams.find(team => team.id === teamId)!
+    }));
+  }
+
+  inputChange(name: string, value: string) {
+    console.warn("changed", name, value);
+
+    this.setState(state => ({
+      team: { ...state.team, [name]: value }
+    }));
+  }
+
+  reset() {
+    this.setState({
+      team: { ...emptyTeam }
+    });
+  }
   render() {
-    const { loading, teams } = this.state;
-    return <TeamsTable teams={teams} loading={loading} save={this.save} />;
+    const { loading, team, teams } = this.state;
+    return (
+      <TeamsTable
+        teams={teams}
+        loading={loading}
+        team={team}
+        save={this.save}
+        delete={this.delete}
+        startEdit={this.startEdit}
+        reset={this.reset}
+        inputChanged={this.inputChange}
+      />
+    );
   }
 }
