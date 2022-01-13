@@ -1,18 +1,17 @@
-export type Team = {
-  id: string | number;
-  members: string;
-  name: string;
-  url: string;
-  promotion: string;
-};
+import React, { useState } from "react";
+import { loadTeam } from "./middleware";
+import { Team } from "./models";
+import "../../styles/loading.css";
 
 type Props = {
+  loading: boolean;
   teams: Team[];
 };
 
-export default function TeamsTable(props: Props) {
+export function TeamsTable(props: Props) {
   return (
     <form
+      className={props.loading === true ? "loading-mask" : ""}
       id="editForm"
       onSubmit={e => {
         e.preventDefault();
@@ -91,4 +90,31 @@ export default function TeamsTable(props: Props) {
       </table>
     </form>
   );
+}
+
+export default class TeamsTableComponent extends React.Component<{}, Props> {
+  constructor(props: Props) {
+    super(props);
+    this.state = {
+      loading: true,
+      teams: []
+    };
+  }
+
+  componentDidMount() {
+    loadTeam()
+      .then((teams: Team[]) => {
+        this.setState({
+          teams
+        });
+      })
+      .then(_ => {
+        this.setState({ loading: false });
+      });
+  }
+  render() {
+    const { loading, teams } = this.state;
+
+    return <TeamsTable teams={teams} loading={loading} />;
+  }
 }
