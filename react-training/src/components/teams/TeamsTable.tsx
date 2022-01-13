@@ -13,7 +13,7 @@ type Actions = {
   save(team: Team): void;
 };
 
-function getValues(form: any): Team {
+function getValues(form: HTMLFormElement): Team {
   return ["promotion", "members", "url", "name"].reduce((team: any, key) => {
     team[key] = form[key].value;
     return team;
@@ -24,10 +24,9 @@ export function TeamsTable(props: Props & Actions) {
   return (
     <form
       className={props.loading === true ? "loading-mask" : ""}
-      id="editForm"
       onSubmit={e => {
         e.preventDefault();
-        var form = e.target as any;
+        var form = e.target as HTMLFormElement;
         const team = getValues(form);
         console.log(team);
         props.save(team);
@@ -114,6 +113,13 @@ export default class TeamsTableComponent extends React.Component<{}, Props> {
       loading: true,
       teams: []
     };
+    // // override/bind save method to keep reference to this.save
+    // const originalSave = this.save;
+    // this.save = async team => {
+    //   console.log("another save", this);
+    //   originalSave.call(this, team);
+    // };
+    this.save = this.save.bind(this);
   }
 
   componentDidMount() {
@@ -133,7 +139,6 @@ export default class TeamsTableComponent extends React.Component<{}, Props> {
       loading: true
     });
     const response = await createTeam(team);
-    console.log("response", response);
     team.id = response.id;
     this.setState(previewState => {
       return {
@@ -145,15 +150,6 @@ export default class TeamsTableComponent extends React.Component<{}, Props> {
 
   render() {
     const { loading, teams } = this.state;
-
-    return (
-      <TeamsTable
-        teams={teams}
-        loading={loading}
-        save={team => {
-          this.save(team);
-        }}
-      />
-    );
+    return <TeamsTable teams={teams} loading={loading} save={this.save} />;
   }
 }
