@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { loadTeam } from "./middleware";
+import { createTeam, loadTeam } from "./middleware";
 import { Team } from "./models";
 import "../../styles/loading.css";
 
@@ -8,14 +8,29 @@ type Props = {
   teams: Team[];
 };
 
-export function TeamsTable(props: Props) {
+type Actions = {
+  // save: () => void;
+  save(team: Team): void;
+};
+
+function getValues(form: any): Team {
+  return ["promotion", "members", "url", "name"].reduce((team: any, key) => {
+    team[key] = form[key].value;
+    return team;
+  }, {} as Team); // empty json for default preview
+}
+
+export function TeamsTable(props: Props & Actions) {
   return (
     <form
       className={props.loading === true ? "loading-mask" : ""}
       id="editForm"
       onSubmit={e => {
         e.preventDefault();
-        console.warn("submit done", props);
+        var form = e.target as any;
+        const team = getValues(form);
+        console.log(team);
+        props.save(team);
       }}
     >
       <table id="teams-table">
@@ -112,9 +127,33 @@ export default class TeamsTableComponent extends React.Component<{}, Props> {
         this.setState({ loading: false });
       });
   }
+
+  async save(team: Team) {
+    this.setState({
+      loading: true
+    });
+    const response = await createTeam(team);
+    console.log("response", response);
+    team.id = response.id;
+    this.setState(previewState => {
+      return {
+        loading: false,
+        teams: [...previewState.teams, team]
+      };
+    });
+  }
+
   render() {
     const { loading, teams } = this.state;
 
-    return <TeamsTable teams={teams} loading={loading} />;
+    return (
+      <TeamsTable
+        teams={teams}
+        loading={loading}
+        save={team => {
+          this.save(team);
+        }}
+      />
+    );
   }
 }
