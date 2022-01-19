@@ -2,12 +2,16 @@ import React, { useState } from "react";
 import { createTeam, deleteTeam, loadTeam, updateTeam } from "./middleware";
 import { Team } from "./models";
 import "../../styles/loading.css";
+import Highlighted from "../Highlighted";
 import { isEmptyStatement } from "typescript";
 
-type Props = {
+type CommonProps = {
   loading: boolean;
   team: Team;
   teams: Team[];
+};
+type Props = CommonProps & {
+  search: string;
 };
 
 type Actions = {
@@ -65,12 +69,25 @@ export function TeamsTable(props: Props & Actions) {
                 <td style={{ textAlign: "center" }}>
                   <input value={team.id} type="checkbox" />
                 </td>
-                <td>{team.promotion}</td>
-                <td>{team.members}</td>
-                <td>{team.name}</td>
+                <td>
+                  {" "}
+                  <Highlighted text={team.promotion} highlight={props.search} />
+                </td>
+                <td>
+                  <Highlighted text={team.members} highlight={props.search} />
+                </td>
+                <td
+                // dangerouslySetInnerHTML={{
+                //   __html: props.search
+                //     ? team.name.replaceAll(new RegExp(props.search, "gi"), m => `<mark>${m}</mark>`)
+                //     : team.name
+                // }}
+                >
+                  <Highlighted text={team.name} highlight={props.search} />
+                </td>
                 <td>
                   <a href={team.url} target="_blank">
-                    {team.url.replace("https://github.com/", "")}
+                    <Highlighted text={team.url.replace("https://github.com/", "")} highlight={props.search} />
                   </a>
                 </td>
                 <td>
@@ -173,7 +190,7 @@ type TableProps = {
   search?: string;
 };
 
-type TableState = Props & {
+type TableState = CommonProps & {
   filteredTeams: Team[] | null;
 };
 
@@ -212,17 +229,19 @@ export default class TeamsTableComponent extends React.Component<TableProps, Tab
   }
 
   componentDidUpdate(prevProps: TableProps, prevState: TableState) {
-    const search = this.props.search || "";
+    let search = this.props.search || "";
     if (search !== prevProps.search || this.state.teams !== prevState.teams) {
+      search = search.toLocaleLowerCase();
       // or search changed or teams array updated
       if (search) {
         this.setState(state => ({
           filteredTeams: state.teams.filter(
             team =>
-              team.id.indexOf(search) > -1 ||
-              team.promotion.indexOf(search) > -1 ||
-              team.members.indexOf(search) > -1 ||
-              team.url.indexOf(search) > -1
+              team.id.toLowerCase().indexOf(search) > -1 ||
+              team.promotion.toLowerCase().indexOf(search) > -1 ||
+              team.name.toLowerCase().indexOf(search) > -1 ||
+              team.members.toLowerCase().indexOf(search) > -1 ||
+              team.url.toLowerCase().indexOf(search) > -1
           )
         }));
       } else {
@@ -292,13 +311,15 @@ export default class TeamsTableComponent extends React.Component<TableProps, Tab
   }
 
   render() {
-    const { loading, team, teams } = this.state;
+    const { loading, team, teams, filteredTeams } = this.state;
+    const { search } = this.props;
 
     return (
       <TeamsTable
-        teams={this.state.filteredTeams !== null ? this.state.filteredTeams : teams}
+        teams={filteredTeams !== null ? filteredTeams : teams}
         loading={loading}
         team={team}
+        search={search || ""}
         save={this.save}
         delete={this.delete}
         startEdit={this.startEdit}
