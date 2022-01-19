@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { createTeam, deleteTeam, loadTeam } from "./middleware";
+import { createTeam, deleteTeam, loadTeam, updateTeam } from "./middleware";
 import { Team } from "./models";
 import "../../styles/loading.css";
 import { isEmptyStatement } from "typescript";
@@ -32,9 +32,9 @@ export function TeamsTable(props: Props & Actions) {
       className={props.loading === true ? "loading-mask" : ""}
       onSubmit={e => {
         e.preventDefault();
-        var form = e.target as HTMLFormElement;
-        const team = getValues(form);
-        props.save(team);
+        // var form = e.target as HTMLFormElement;
+        // const team = getValues(form);
+        props.save(props.team);
       }}
     >
       <table id="teams-table">
@@ -206,12 +206,26 @@ export default class TeamsTableComponent extends React.Component<{}, Props> {
     this.setState({
       loading: true
     });
-    const response = await createTeam(team);
-    team.id = response.id;
-    this.setState(previewState => ({
-      loading: false,
-      teams: [...previewState.teams, team]
-    }));
+    if (team.id) {
+      const response = await updateTeam(team);
+      this.setState(state => ({
+        loading: false,
+        teams: state.teams.map(t => {
+          if (team.id === t.id) {
+            return { ...team };
+          }
+          return t;
+        })
+      }));
+    } else {
+      const response = await createTeam(team);
+      team.id = response.id;
+      this.setState(previewState => ({
+        loading: false,
+        teams: [...previewState.teams, team]
+      }));
+    }
+    this.reset();
   }
 
   async delete(teamId: string) {
@@ -246,6 +260,7 @@ export default class TeamsTableComponent extends React.Component<{}, Props> {
       team: { ...emptyTeam }
     });
   }
+
   render() {
     const { loading, team, teams } = this.state;
     return (

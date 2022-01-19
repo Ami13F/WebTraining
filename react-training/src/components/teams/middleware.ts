@@ -28,3 +28,13 @@ export function deleteTeam(teamId: string): Promise<{ success: boolean }> {
     body: JSON.stringify({ id: teamId })
   }).then(response => response.json());
 }
+
+export function updateTeam(team: Team): Promise<{ success: boolean }> {
+  return fetch("http://localhost:3000/teams-json/update", {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(team)
+  }).then(response => response.json());
+}
