@@ -3,7 +3,7 @@ import { createTeam, deleteTeam, loadTeam, updateTeam } from "./middleware";
 import { Team } from "./models";
 import "../../styles/loading.css";
 import Highlighted from "../Highlighted";
-import { isEmptyStatement } from "typescript";
+import { Autocomplete, TextField } from "@mui/material";
 
 type CommonProps = {
   loading: boolean;
@@ -120,51 +120,57 @@ export function TeamsTable(props: Props & Actions) {
           <tr>
             <td></td>
             <td>
-              <input
+              <Autocomplete
+                options={[...new Set(props.teams.map(team => team.promotion))]}
+                renderInput={params => <TextField required {...params} label="Promotion" />}
+                onChange={(e, newValue) => {
+                  props.inputChanged("promotion", newValue || "");
+                }}
+              />
+              {/* <input
                 type="text"
                 name="promotion"
                 value={props.team.promotion}
                 onChange={e => {
-                  props.inputChanged(e.target.name, e.target.value);
+                  props.inputChanged(e.target.promotion, e.target.value);
                 }}
                 required
                 placeholder="Promotion"
-              />
+              /> */}
             </td>
             <td>
-              <input
-                type="text"
-                name="members"
-                value={props.team.members}
-                onChange={e => {
-                  props.inputChanged(e.target.name, e.target.value);
+              <Autocomplete
+                options={[...new Set(props.teams.map(team => team.members))]}
+                renderInput={params => <TextField required {...params} label="Members" />}
+                onChange={(e, newValue) => {
+                  props.inputChanged("members", newValue || "");
                 }}
-                required
-                placeholder="Members"
               />
             </td>
             <td>
-              <input
+              <TextField
                 type="text"
                 name="name"
+                fullWidth
                 value={props.team.name}
                 onChange={e => {
                   props.inputChanged(e.target.name, e.target.value);
                 }}
                 required
-                placeholder="Name"
+                label="Name"
               />
             </td>
             <td>
-              <input
+              <TextField
                 type="text"
                 name="url"
+                fullWidth
                 value={props.team.url}
                 onChange={e => {
                   props.inputChanged(e.target.name, e.target.value);
                 }}
                 required
-                placeholder="Url"
+                label="Url"
               />
             </td>
             <td>
