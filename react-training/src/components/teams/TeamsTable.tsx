@@ -169,13 +169,22 @@ const emptyTeam: Team = {
   promotion: ""
 };
 
-export default class TeamsTableComponent extends React.Component<{}, Props> {
-  constructor(props: Props) {
+type TableProps = {
+  search?: string;
+};
+
+type TableState = Props & {
+  filteredTeams: Team[] | null;
+};
+
+export default class TeamsTableComponent extends React.Component<TableProps, TableState> {
+  constructor(props: TableProps) {
     super(props);
     this.state = {
       loading: true,
       team: { ...emptyTeam },
-      teams: []
+      teams: [],
+      filteredTeams: null
     };
     // // override/bind save method to keep reference to this.save
     // const originalSave = this.save;
@@ -200,6 +209,28 @@ export default class TeamsTableComponent extends React.Component<{}, Props> {
       .then(_ => {
         this.setState({ loading: false });
       });
+  }
+
+  componentDidUpdate(prevProps: TableProps, prevState: TableState) {
+    const search = this.props.search || "";
+    if (search !== prevProps.search || this.state.teams !== prevState.teams) {
+      // or search changed or teams array updated
+      if (search) {
+        this.setState(state => ({
+          filteredTeams: state.teams.filter(
+            team =>
+              team.id.indexOf(search) > -1 ||
+              team.promotion.indexOf(search) > -1 ||
+              team.members.indexOf(search) > -1 ||
+              team.url.indexOf(search) > -1
+          )
+        }));
+      } else {
+        this.setState({
+          filteredTeams: null
+        });
+      }
+    }
   }
 
   async save(team: Team) {
@@ -248,8 +279,7 @@ export default class TeamsTableComponent extends React.Component<{}, Props> {
   }
 
   inputChange(name: string, value: string) {
-    console.warn("changed", name, value);
-
+    // console.info("changed", name, value);
     this.setState(state => ({
       team: { ...state.team, [name]: value }
     }));
@@ -263,9 +293,10 @@ export default class TeamsTableComponent extends React.Component<{}, Props> {
 
   render() {
     const { loading, team, teams } = this.state;
+
     return (
       <TeamsTable
-        teams={teams}
+        teams={this.state.filteredTeams !== null ? this.state.filteredTeams : teams}
         loading={loading}
         team={team}
         save={this.save}
