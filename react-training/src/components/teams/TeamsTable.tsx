@@ -140,7 +140,7 @@ export function TeamsTable(props: Props & Actions) {
                 fullWidth
                 value={props.team.name}
                 onChange={e => {
-                  props.inputChanged(e.target.name, e.target.value);
+                  props.inputChanged("name", e.target.value);
                 }}
                 required
                 label="Name"
@@ -153,7 +153,7 @@ export function TeamsTable(props: Props & Actions) {
                 fullWidth
                 value={props.team.url}
                 onChange={e => {
-                  props.inputChanged(e.target.name, e.target.value);
+                  props.inputChanged("url", e.target.value);
                 }}
                 required
                 label="Url"
