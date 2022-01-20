@@ -24,8 +24,7 @@ function getTeamHTML({
           <a href="#" data-team-id="${id}" class="edit-btn">&#9998;</a>
           <a href="#" data-team-id="${id}" class="delete-btn">&#10006;</a>          
         </td>    
-    </td>
-</tr>`;
+  </tr>`;
 }
 
 var tb = document.querySelector("#teams-table tbody");
