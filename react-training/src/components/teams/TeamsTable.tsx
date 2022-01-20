@@ -4,6 +4,7 @@ import { Team } from "./models";
 import "../../styles/loading.css";
 import Highlighted from "../Highlighted";
 import { Autocomplete, TextField } from "@mui/material";
+import CustomAutoComplete from "../CustomAutoComplete";
 
 type CommonProps = {
   loading: boolean;
@@ -14,21 +15,16 @@ type Props = CommonProps & {
   search: string;
 };
 
+type TeamKeys = "id" | "promotion" | "name" | "url" | "members";
+
 type Actions = {
   // save: () => void;
   save(team: Team): void;
   delete(teamId: string): void;
   startEdit(teamId: string): void;
   reset(): void;
-  inputChanged(name: string, value: string): void;
+  inputChanged(name: TeamKeys, value: string): void;
 };
-
-function getValues(form: HTMLFormElement): Team {
-  return ["promotion", "members", "url", "name"].reduce((team: any, key) => {
-    team[key] = form[key].value;
-    return team;
-  }, {} as Team); // empty json for default preview
-}
 
 export function TeamsTable(props: Props & Actions) {
   return (
@@ -36,8 +32,6 @@ export function TeamsTable(props: Props & Actions) {
       className={props.loading === true ? "loading-mask" : ""}
       onSubmit={e => {
         e.preventDefault();
-        // var form = e.target as HTMLFormElement;
-        // const team = getValues(form);
         props.save(props.team);
       }}
     >
@@ -120,30 +114,22 @@ export function TeamsTable(props: Props & Actions) {
           <tr>
             <td></td>
             <td>
-              <Autocomplete
-                options={[...new Set(props.teams.map(team => team.promotion))]}
-                renderInput={params => <TextField required {...params} label="Promotion" />}
-                onChange={(e, newValue) => {
-                  props.inputChanged("promotion", newValue || "");
+              <CustomAutoComplete
+                value={props.team.promotion || null}
+                options={[...new Set(props.teams.flatMap(team => team.promotion.split(/\s*,\s*/)))]}
+                label="Promotion"
+                onChange={newValue => {
+                  props.inputChanged("promotion", newValue);
                 }}
               />
-              {/* <input
-                type="text"
-                name="promotion"
-                value={props.team.promotion}
-                onChange={e => {
-                  props.inputChanged(e.target.promotion, e.target.value);
-                }}
-                required
-                placeholder="Promotion"
-              /> */}
             </td>
             <td>
-              <Autocomplete
-                options={[...new Set(props.teams.map(team => team.members))]}
-                renderInput={params => <TextField required {...params} label="Members" />}
-                onChange={(e, newValue) => {
-                  props.inputChanged("members", newValue || "");
+              <CustomAutoComplete
+                value={props.team.members || null}
+                options={[...new Set(props.teams.flatMap(team => team.members.split(/\s*,\s*/)))]}
+                label="Members"
+                onChange={newValue => {
+                  props.inputChanged("members", newValue);
                 }}
               />
             </td>
